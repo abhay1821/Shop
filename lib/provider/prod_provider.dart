@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../models/product.dart';
+import './product.dart';
 
+//extending another class using changenotifier
 class Products with ChangeNotifier {
   List<Product> _items = [
     Product(
@@ -37,13 +38,39 @@ class Products with ChangeNotifier {
     ),
   ];
 
+  // var _showfavouritesOnly = false;
+
   List<Product> get items {
+    // if (_showfavouritesOnly) {
+    //   return _items.where((proditem) => proditem.isFavourite).toList();
+    // }
     //copy of item ...
     return [..._items];
   }
 
+  List<Product> get favouriteItems {
+    return _items.where((proItem) => proItem.isFavourite).toList();
+  }
+
+  Product findById(String id) {
+    return _items.firstWhere((prod) => prod.id == id);
+  }
+
+  // void showFavouritesOnly() {
+  //   _showfavouritesOnly = true;
+  //   notifyListeners();
+  // }
+
+  // void showAll() {
+  //   _showfavouritesOnly = false;
+  //   notifyListeners();
+  // }
+
   void addProduct() {
     // _items.add(value);
     notifyListeners();
+    //for getting the chnge b/w this class and other provider package
+    //only the class which r listning will be rebuild
+    //instead of full material ap
   }
 }
