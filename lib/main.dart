@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/screens/cart_screen.dart';
 import './screens/product_over_screen.dart';
 import '../screens/pro_detail_screen.dart';
 import './provider/prod_provider.dart';
@@ -18,15 +19,16 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           //providing the instance to all child widgets
           create: (ctx) => Products(),
+          //we r creating new object thatswhy be used create
+          // value: Products(),
         ),
-        //we r creating new object thatswhy be used create
-        // value: Products(),
         ChangeNotifierProvider(
-          create:(ctx) =>Cart(),
+          create: (ctx) => Cart(),
         ),
       ],
       child: MaterialApp(
         title: 'My Shop',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.purple,
           accentColor: Colors.deepOrange,
@@ -35,6 +37,7 @@ class MyApp extends StatelessWidget {
         home: ProductsOverView(),
         routes: {
           ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
+          CartScreen.routeName: (ctx) => CartScreen(),
         },
       ),
     );

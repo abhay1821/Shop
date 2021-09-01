@@ -17,10 +17,22 @@ class CartItem {
 }
 
 class Cart with ChangeNotifier {
-  late Map<String, CartItem> _items;
+  late Map<String, CartItem> _items = {};
 
   Map<String, CartItem> get items {
     return {..._items};
+  }
+
+  get itemCount {
+    return _items.length;
+  }
+
+  double get totalAmount {
+    var total = 0.0;
+    _items.forEach((key, CartItem) {
+      total += CartItem.price * CartItem.quantity;
+    });
+    return total;
   }
 
   void additem(
@@ -28,24 +40,34 @@ class Cart with ChangeNotifier {
     double price,
     String title,
   ) {
+    print('here');
     if (_items.containsKey(productId)) {
       //if already in cart then just need to increase the quantity
+      print('updated');
       _items.update(
           productId,
           (existingCartItem) => CartItem(
               id: existingCartItem.id,
               title: existingCartItem.title,
-              quantity: existingCartItem.quantity+1,
-              price:existingCartItem.price));
+              quantity: existingCartItem.quantity + 1,
+              price: existingCartItem.price));
     } else {
+      print('added');
       _items.putIfAbsent(
-          productId,
-          () => CartItem(
-                id: DateTime.now().toString(),
-                title: title,
-                price: price,
-                quantity: 1,
-              ));
+        productId,
+        () => CartItem(
+          id: DateTime.now().toString(),
+          title: title,
+          price: price,
+          quantity: 1,
+        ),
+      );
     }
+    notifyListeners();
+  }
+
+  void removeitem(String productId) {
+    _items.remove(productId);
+    notifyListeners();
   }
 }

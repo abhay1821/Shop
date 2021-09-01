@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../provider/cart.dart';
 import '../screens/pro_detail_screen.dart';
 import '../provider/product.dart';
 
@@ -57,7 +58,13 @@ class ProductItem extends StatelessWidget {
           ),
           trailing: IconButton(
             icon: Icon(Icons.shopping_cart),
-            onPressed: () {},
+            onPressed: () {
+              Provider.of<Cart>(context, listen: false).additem(
+                product.id,
+                product.price,
+                product.title,
+              );
+            },
           ),
         ),
       ),
