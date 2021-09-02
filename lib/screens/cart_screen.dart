@@ -31,8 +31,9 @@ class CartScreen extends StatelessWidget {
                   Spacer(),
                   Chip(
                     label: Text(
-                      '\$${cart.totalAmount}',
+                      '\$${cart.totalAmount.toStringAsFixed(2)}',
                       style: TextStyle(
+                        // ignore: deprecated_member_use
                         color: Theme.of(context).primaryTextTheme.title!.color,
                       ),
                     ),
@@ -43,6 +44,7 @@ class CartScreen extends StatelessWidget {
                     child: Text('ORDER NOW'),
                     onPressed: () {
                       Provider.of<Orders>(context, listen: false).addOrder(
+                        //for items to list of items istead of map
                         cart.items.values.toList(),
                         cart.totalAmount,
                       );
