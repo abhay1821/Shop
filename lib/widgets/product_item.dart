@@ -60,9 +60,29 @@ class ProductItem extends StatelessWidget {
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
               Provider.of<Cart>(context, listen: false).additem(
-                product.id,
+                product.id!,
                 product.price,
                 product.title,
+              );
+              //for hide current snackbar
+              // ignore: deprecated_member_use
+              Scaffold.of(context).hideCurrentSnackBar();
+              //for the nearest scaffold
+              // ignore: deprecated_member_use
+              Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Added Item to Cart',
+                  ),
+                  duration: Duration(seconds: 2),
+                  action: SnackBarAction(
+                    label: 'UNDO',
+                    onPressed: () {
+                      Provider.of<Cart>(context, listen: false)
+                          .removeSingleItem(product.id!);
+                    },
+                  ),
+                ),
               );
             },
           ),
