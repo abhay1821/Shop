@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import './product.dart';
+import 'package:http/http.dart' as http;
 
 //extending another class using changenotifier
 class Products with ChangeNotifier {
@@ -66,26 +68,78 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  void addProduct(Product product) {
-    final newProduct = Product(
-      title: product.title,
-      description: product.description,
-      price: product.price,
-      imageUrl: product.imageUrl,
-      id: DateTime.now().toString(),
-    );
-    _items.add(newProduct);
-    _items.insert(0, newProduct); //at the start of the list
-    // _items.add(value);
-    notifyListeners();
-    //for getting the chnge b/w this class and other provider package
-    //only the class which r listning will be rebuild
-    //instead of full material ap
+  Future<void> fetchAndSetProduct() async {
+    const url = 'https://shop-18358-default-rtdb.firebaseio.com/products.json';
+    try {
+      final response = await http.get(Uri.parse(url));
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      final List<Product> loadedProducts = [];
+      extractedData.forEach((prodId, prodData) {
+        loadedProducts.add(Product(
+          id: prodId,
+          title: prodData['title'],
+          description: prodData['description'],
+          price: prodData['price'],
+          isFavourite: prodData['isFavourite'],
+          imageUrl: prodData['imageUrl'],
+        ));
+      });
+      _items = loadedProducts;
+      notifyListeners();
+    } catch (error) {
+      throw (error);
+    }
   }
 
-  void updateProduct(String id, Product newProduct) {
+  //using async all the code wrap itself into future
+  Future<void> addProduct(Product product) async {
+    const url = 'https://shop-18358-default-rtdb.firebaseio.com/products.json';
+    //wait tells it should wait to complete post request
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        body: json.encode({
+          'title': product.title,
+          'description': product.description,
+          'imageUrl': product.imageUrl,
+          'price': product.price,
+          'isFavourite': product.isFavourite,
+        }),
+      );
+      final newProduct = Product(
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+        id: json.decode(response.body)['name'],
+      );
+      _items.add(newProduct);
+      //_items.insert(0, newProduct); at the start of the list
+      // _items.add(value);
+      notifyListeners();
+      //for getting the chnge b/w this class and other provider package
+      //only the class which r listning will be rebuild
+      //instead of full material ap
+    } catch (error) {
+      print(error);
+      throw error;
+    }
+    //for handling the error in case post or adding the pro
+  }
+
+  void updateProduct(String id, Product newProduct) async {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
+      //add /$id for getting deep dive
+      final url =
+          'https://shop-18358-default-rtdb.firebaseio.com/products/$id.json';
+      await http.patch(Uri.parse(url),
+          body: json.encode({
+            'title': newProduct.title,
+            'description': newProduct.description,
+            'imageUrl': newProduct.imageUrl,
+            'price': newProduct.price,
+          }));
       _items[prodIndex] = newProduct;
       notifyListeners();
     } else {
@@ -94,6 +148,9 @@ class Products with ChangeNotifier {
   }
 
   void deleteProduct(String id) {
+    final url =
+        'https://shop-18358-default-rtdb.firebaseio.com/products/$id.json';
+    http.delete(Uri.parse(url));
     _items.removeWhere((prod) => prod.id == id);
     notifyListeners();
   }
