@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/provider/cart.dart';
+import 'package:shop/provider/prod_provider.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/products_grid.dart';
 import '../screens/cart_screen.dart';
@@ -18,6 +19,36 @@ class ProductsOverView extends StatefulWidget {
 
 class _ProductsOverViewState extends State<ProductsOverView> {
   var _showOnlyFavourites = false;
+  var _isInit = true;
+  var _isloading = true;
+
+  @override
+  void initState() {
+    //in init state of(context) doesnt work
+    Provider.of<Products>(context).fetchAndSetProduct();
+    super.initState();
+  }
+
+  //initialises after the widget has be fully initialised
+  // but before build run it would also multiple times unlike initstate
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      setState(() {
+        _isloading = true;
+      });
+
+      Provider.of<Products>(context).fetchAndSetProduct().then((_) {
+        //for loading spinner
+        setState(() {
+          _isloading = false;
+        });
+      });
+    }
+    _isInit = false;
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     // final productsContainer = Provider.of<Products>(context, listen: false);
@@ -68,7 +99,11 @@ class _ProductsOverViewState extends State<ProductsOverView> {
         ],
       ),
       drawer: AppDrawer(),
-      body: ProductsGrid(_showOnlyFavourites),
+      body: _isloading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : ProductsGrid(_showOnlyFavourites),
     );
   }
 }
