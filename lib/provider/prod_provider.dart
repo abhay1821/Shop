@@ -50,6 +50,10 @@ class Products with ChangeNotifier {
     return [..._items];
   }
 
+  final String authToken;
+  final String userId;
+  Products(this.authToken, this._items, this.userId);
+
   List<Product> get favouriteItems {
     return _items.where((proItem) => proItem.isFavourite).toList();
   }
@@ -68,11 +72,21 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  Future<void> fetchAndSetProduct() async {
-    const url = 'https://shop-18358-default-rtdb.firebaseio.com/products.json';
+  Future<void> fetchAndSetProduct([bool filterByUser = false]) async {
+    final filterString =
+        filterByUser ? '&orderBy="creatorId"&equalTo="$userId"' : '';
+    var url =
+        'https://shop-18358-default-rtdb.firebaseio.com/products.json?auth=$authToken&$filterString';
     try {
       final response = await http.get(Uri.parse(url));
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      if (extractedData.isEmpty) {
+        return;
+      }
+      url =
+          'https://shop-18358-default-rtdb.firebaseio.com/userFav/$userId.json?auth=$authToken';
+      final favResponse = await http.get(Uri.parse(url));
+      final favData = json.decode(favResponse.body);
       final List<Product> loadedProducts = [];
       extractedData.forEach((prodId, prodData) {
         loadedProducts.add(Product(
@@ -80,7 +94,8 @@ class Products with ChangeNotifier {
           title: prodData['title'],
           description: prodData['description'],
           price: prodData['price'],
-          isFavourite: prodData['isFavourite'],
+          //??checks for null
+          isFavourite: favData == null ? false : favData[prodId] ?? false,
           imageUrl: prodData['imageUrl'],
         ));
       });
@@ -93,7 +108,8 @@ class Products with ChangeNotifier {
 
   //using async all the code wrap itself into future
   Future<void> addProduct(Product product) async {
-    const url = 'https://shop-18358-default-rtdb.firebaseio.com/products.json';
+    final url =
+        'https://shop-18358-default-rtdb.firebaseio.com/products.json?auth=$authToken';
     //wait tells it should wait to complete post request
     try {
       final response = await http.post(
@@ -103,7 +119,7 @@ class Products with ChangeNotifier {
           'description': product.description,
           'imageUrl': product.imageUrl,
           'price': product.price,
-          'isFavourite': product.isFavourite,
+          'creatorId': userId,
         }),
       );
       final newProduct = Product(
@@ -132,7 +148,7 @@ class Products with ChangeNotifier {
     if (prodIndex >= 0) {
       //add /$id for getting deep dive
       final url =
-          'https://shop-18358-default-rtdb.firebaseio.com/products/$id.json';
+          'https://shop-18358-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken';
       await http.patch(Uri.parse(url),
           body: json.encode({
             'title': newProduct.title,
@@ -149,7 +165,7 @@ class Products with ChangeNotifier {
 
   void deleteProduct(String id) {
     final url =
-        'https://shop-18358-default-rtdb.firebaseio.com/products/$id.json';
+        'https://shop-18358-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken';
     http.delete(Uri.parse(url));
     _items.removeWhere((prod) => prod.id == id);
     notifyListeners();

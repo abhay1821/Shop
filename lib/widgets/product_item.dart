@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../provider/cart.dart';
 import '../screens/pro_detail_screen.dart';
 import '../provider/product.dart';
+import '../provider/auth.dart';
 
 class ProductItem extends StatelessWidget {
   // final String id;
@@ -14,6 +15,7 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context);
+    final authData = Provider.of<Auth>(context, listen: false);
     //cliprrect for giving shape to gridtile
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -49,7 +51,7 @@ class ProductItem extends StatelessWidget {
             ),
             color: Theme.of(context).accentColor,
             onPressed: () {
-              product.toggleFavStatus();
+              product.toggleFavStatus(authData.token, authData.userId);
             },
           ),
           title: Text(

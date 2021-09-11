@@ -25,7 +25,7 @@ class _ProductsOverViewState extends State<ProductsOverView> {
   @override
   void initState() {
     //in init state of(context) doesnt work
-    Provider.of<Products>(context).fetchAndSetProduct();
+    Provider.of<Products>(context, listen: false).fetchAndSetProduct();
     super.initState();
   }
 
