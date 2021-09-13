@@ -102,10 +102,10 @@ class _AuthCardState extends State<AuthCard>
   var _isLoading = false;
   final _passwordController = TextEditingController();
   //adding animation height of box
-  AnimationController _controller;
+  AnimationController? _controller;
   // ignore: unused_field
-  Animation<Size> _heightAnimation;
-  Animation<double> _opacity;
+  Animation<Size>? _heightAnimation;
+  Animation<double>? _opacity;
 
   @override
   void initState() {
@@ -119,11 +119,11 @@ class _AuthCardState extends State<AuthCard>
     _heightAnimation = Tween<Size>(
             begin: Size(double.infinity, 260), end: Size(double.infinity, 300))
         .animate(CurvedAnimation(
-      parent: _controller,
+      parent: _controller!,
       curve: Curves.fastOutSlowIn,
     ));
     _opacity = Tween(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
+      CurvedAnimation(parent: _controller!, curve: Curves.easeIn),
     );
     // _heightAnimation.addListener(() => setState(() {}));
   }
@@ -131,7 +131,7 @@ class _AuthCardState extends State<AuthCard>
   @override
   void dispose() {
     super.dispose();
-    _controller.dispose();
+    _controller!.dispose();
   }
 
   void _showErrorDialog(String message) {
@@ -201,12 +201,12 @@ class _AuthCardState extends State<AuthCard>
       setState(() {
         _authMode = AuthMode.Signup;
       });
-      _controller.forward();
+      _controller!.forward();
     } else {
       setState(() {
         _authMode = AuthMode.Login;
       });
-      _controller.reverse();
+      _controller!.reverse();
     }
   }
 
@@ -269,7 +269,7 @@ class _AuthCardState extends State<AuthCard>
                   ),
                   curve: Curves.easeIn,
                   child: FadeTransition(
-                    opacity: _opacity,
+                    opacity: _opacity!,
                     child: TextFormField(
                       enabled: _authMode == AuthMode.Signup,
                       decoration:
