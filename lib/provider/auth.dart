@@ -17,8 +17,7 @@ class Auth with ChangeNotifier {
   }
 
   String get token {
-    if ((_token?.isNotEmpty ?? false) &&
-        (_expiryDate?.isAfter(DateTime.now()) ?? false)) {
+    if ((_token?.isNotEmpty ?? false) && (_expiryDate?.isAfter(DateTime.now()) ?? false)) {
       return _token!;
     }
     //null=>""
@@ -29,10 +28,8 @@ class Auth with ChangeNotifier {
     return _userId!;
   }
 
-  Future<void> _authenticate(
-      String email, String password, String urlSegment) async {
-    final url =
-        'https://identitytoolkit.googleapis.com/v1/$urlSegment?key=AIzaSyCObYh1FhKhmEbdjN8DEJPEd3OAbTgKjKI';
+  Future<void> _authenticate(String email, String password, String urlSegment) async {
+    final url = 'https://identitytoolkit.googleapis.com/v1/$urlSegment?key=AIzaSyCObYh1FhKhmEbdjN8DEJPEd3OAbTgKjKI';
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -115,12 +112,7 @@ class Auth with ChangeNotifier {
   }
 
   void _autoLogout() {
-    // ?.  is used to check if the variable is null then the further statements
-    // after ?. are not executed and it returns null
-    // this returned null can be used with ?? to give a default value
     if (_authTimer?.isActive ?? false) {
-      // ! is used when it is 100% sure that the variable will not be empty and is
-      // used after the variable name that is sure not to be empty
       _authTimer!.cancel();
     }
     final timeToExpiry = _expiryDate?.difference(DateTime.now()).inSeconds ?? 0;

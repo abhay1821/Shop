@@ -11,8 +11,7 @@ class Products with ChangeNotifier {
       title: 'Red Shirt',
       description: 'A red shirt - it is pretty red!',
       price: 29.99,
-      imageUrl:
-          'https://cdn.pixabay.com/photo/2016/10/02/22/17/red-t-shirt-1710578_1280.jpg',
+      imageUrl: 'https://cdn.pixabay.com/photo/2016/10/02/22/17/red-t-shirt-1710578_1280.jpg',
     ),
     Product(
       id: 'p2',
@@ -27,26 +26,18 @@ class Products with ChangeNotifier {
       title: 'Yellow Scarf',
       description: 'Warm and cozy - exactly what you need for the winter.',
       price: 19.99,
-      imageUrl:
-          'https://live.staticflickr.com/4043/4438260868_cc79b3369d_z.jpg',
+      imageUrl: 'https://live.staticflickr.com/4043/4438260868_cc79b3369d_z.jpg',
     ),
     Product(
       id: 'p4',
       title: 'A Pan',
       description: 'Prepare any meal you want.',
       price: 49.99,
-      imageUrl:
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
     ),
   ];
 
-  // var _showfavouritesOnly = false;
-
   List<Product> get items {
-    // if (_showfavouritesOnly) {
-    //   return _items.where((proditem) => proditem.isFavourite).toList();
-    // }
-    //copy of item ...
     return [..._items];
   }
 
@@ -62,29 +53,16 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-  // void showFavouritesOnly() {
-  //   _showfavouritesOnly = true;
-  //   notifyListeners();
-  // }
-
-  // void showAll() {
-  //   _showfavouritesOnly = false;
-  //   notifyListeners();
-  // }
-
   Future<void> fetchAndSetProduct([bool filterByUser = false]) async {
-    final filterString =
-        filterByUser ? '&orderBy="creatorId"&equalTo="$userId"' : '';
-    var url =
-        'https://shop-18358-default-rtdb.firebaseio.com/products.json?auth=$authToken&$filterString';
+    final filterString = filterByUser ? '&orderBy="creatorId"&equalTo="$userId"' : '';
+    var url = 'https://shop-18358-default-rtdb.firebaseio.com/products.json?auth=$authToken&$filterString';
     try {
       final response = await http.get(Uri.parse(url));
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       if (extractedData.isEmpty) {
         return;
       }
-      url =
-          'https://shop-18358-default-rtdb.firebaseio.com/userFav/$userId.json?auth=$authToken';
+      url = 'https://shop-18358-default-rtdb.firebaseio.com/userFav/$userId.json?auth=$authToken';
       final favResponse = await http.get(Uri.parse(url));
       final favData = json.decode(favResponse.body);
       final List<Product> loadedProducts = [];
@@ -102,14 +80,14 @@ class Products with ChangeNotifier {
       _items = loadedProducts;
       notifyListeners();
     } catch (error) {
-      throw (error);
+      debugPrint(error.toString());
+      // throw (error);
     }
   }
 
   //using async all the code wrap itself into future
   Future<void> addProduct(Product product) async {
-    final url =
-        'https://shop-18358-default-rtdb.firebaseio.com/products.json?auth=$authToken';
+    final url = 'https://shop-18358-default-rtdb.firebaseio.com/products.json?auth=$authToken';
     //wait tells it should wait to complete post request
     try {
       final response = await http.post(
@@ -130,25 +108,18 @@ class Products with ChangeNotifier {
         id: json.decode(response.body)['name'],
       );
       _items.add(newProduct);
-      //_items.insert(0, newProduct); at the start of the list
-      // _items.add(value);
+
       notifyListeners();
-      //for getting the chnge b/w this class and other provider package
-      //only the class which r listning will be rebuild
-      //instead of full material ap
     } catch (error) {
       print(error);
       throw error;
     }
-    //for handling the error in case post or adding the pro
   }
 
   void updateProduct(String id, Product newProduct) async {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
-      //add /$id for getting deep dive
-      final url =
-          'https://shop-18358-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken';
+      final url = 'https://shop-18358-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken';
       await http.patch(Uri.parse(url),
           body: json.encode({
             'title': newProduct.title,
@@ -164,8 +135,7 @@ class Products with ChangeNotifier {
   }
 
   void deleteProduct(String id) {
-    final url =
-        'https://shop-18358-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken';
+    final url = 'https://shop-18358-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken';
     http.delete(Uri.parse(url));
     _items.removeWhere((prod) => prod.id == id);
     notifyListeners();

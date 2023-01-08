@@ -8,11 +8,8 @@ class ProductsGrid extends StatelessWidget {
   ProductsGrid(this.showFav);
   @override
   Widget build(BuildContext context) {
-    //direct communi behind the scenes due to
-    // provider only productsgrid widget will be rebuilt
-    //so the parent productoverview will not be rebuilt
     final productsData = Provider.of<Products>(context);
-    final products = showFav?productsData.favouriteItems: productsData.items;
+    final products = showFav ? productsData.favouriteItems : productsData.items;
     return GridView.builder(
       //no of columns
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -22,14 +19,8 @@ class ProductsGrid extends StatelessWidget {
         mainAxisSpacing: 10,
       ),
       itemBuilder: (ctx, index) => ChangeNotifierProvider.value(
-        //it will return sngle product & with itembulder wil buld al the prdcts
-        // create: (c)=>products[index],
         value: products[index],
-        child: ProductItem(
-            // products[index].id,
-            // products[index].title,
-            // products[index].imageUrl,
-            ),
+        child: ProductItem(),
       ),
       padding: const EdgeInsets.all(10.0),
       itemCount: products.length,

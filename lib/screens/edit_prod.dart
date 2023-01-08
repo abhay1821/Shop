@@ -14,7 +14,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _descriptionFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
-  //for getting acess of the form
   final _form = GlobalKey<FormState>();
   var _editingproduct = Product(
     id: null,
@@ -44,11 +43,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final String productId =
-          ModalRoute.of(context)!.settings.arguments.toString();
+      final String productId = ModalRoute.of(context)!.settings.arguments.toString();
       if (productId.isNotEmpty) {
-        _editingproduct =
-            Provider.of<Products>(context, listen: false).findById(productId);
+        _editingproduct = Provider.of<Products>(context, listen: false).findById(productId);
         _initValues = {
           'title': _editingproduct.title,
           'description': _editingproduct.description,
@@ -64,7 +61,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
   }
 
   @override
-  //to avoid the memory leaks
   void dispose() {
     _imageUrlFocusNode.removeListener((_updateImageUrl));
     _priceFocusNode.dispose();
@@ -74,12 +70,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
     super.dispose();
   }
 
-  //for previwing with key strokes
   void _updateImageUrl() {
     if (!_imageUrlFocusNode.hasFocus) {
       if (_imageUrlController.text.isEmpty ||
-          !_imageUrlController.text.startsWith('http') &&
-              !_imageUrlController.text.startsWith('https')) {
+          !_imageUrlController.text.startsWith('http') && !_imageUrlController.text.startsWith('https')) {
         return;
       }
 
@@ -98,16 +92,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
       _isLoading = true;
     });
     if (_editingproduct.id != null) {
-      Provider.of<Products>(context, listen: false)
-          .updateProduct(_editingproduct.id!, _editingproduct);
+      Provider.of<Products>(context, listen: false).updateProduct(_editingproduct.id!, _editingproduct);
       setState(() {
         _isLoading = false;
       });
       Navigator.of(context).pop();
     } else {
       try {
-        await Provider.of<Products>(context, listen: false)
-            .addProduct(_editingproduct);
+        await Provider.of<Products>(context, listen: false).addProduct(_editingproduct);
       } catch (error) {
         await showDialog<Null>(
           context: context,
@@ -122,22 +114,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   },
                   child: Text('Okey'))
             ],
-            // content: Text(error.toString()),
           ),
         );
       } finally {
-        //has to run no matter there is error or not
         setState(() {
           _isLoading = false;
         });
         Navigator.of(context).pop();
       }
-      //for handling the error screen and messages
-      //it will load only once the product is added
-
     }
-
-    // Navigator.of(context).pop();
   }
 
   @override
@@ -145,21 +130,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Product'),
-        actions: <Widget>[
-          IconButton(onPressed: _saveForm, icon: Icon(Icons.save))
-        ],
+        actions: <Widget>[IconButton(onPressed: _saveForm, icon: Icon(Icons.save))],
       ),
-      //we could also use column with singlechildscrollview
-      // instead we use listview without builder
       body: _isLoading == true
           ? Center(
-              //for loading spinner till the product is added
               child: CircularProgressIndicator(),
             )
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: Form(
-                  //for getting access of the form
                   key: _form,
                   child: ListView(
                     children: <Widget>[
@@ -195,8 +174,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         keyboardType: TextInputType.number,
                         focusNode: _priceFocusNode,
                         onFieldSubmitted: (_) {
-                          FocusScope.of(context)
-                              .requestFocus(_descriptionFocusNode);
+                          FocusScope.of(context).requestFocus(_descriptionFocusNode);
                         },
                         validator: (value) {
                           if (value!.isEmpty) {
@@ -276,8 +254,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           //textformfield takes as much spce as it gets
                           Expanded(
                             child: TextFormField(
-                              decoration:
-                                  InputDecoration(labelText: 'ImageUrl'),
+                              decoration: InputDecoration(labelText: 'ImageUrl'),
                               keyboardType: TextInputType.url,
                               textInputAction: TextInputAction.done,
                               //for before submitting saving it
@@ -288,13 +265,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
                                 if (value!.isEmpty) {
                                   return 'Please Enter a Image URl';
                                 }
-                                if (value.startsWith('http') &&
-                                    !value.startsWith('https')) {
+                                if (value.startsWith('http') && !value.startsWith('https')) {
                                   return 'Please Enter the valid URl';
                                 }
                                 return null;
                               },
                               onSaved: (value) {
+                                debugPrint(_editingproduct.id.toString() + "-------");
                                 if (value!.isNotEmpty) {
                                   _editingproduct = Product(
                                     title: _editingproduct.title,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/provider/cart.dart';
 import 'package:shop/provider/prod_provider.dart';
-import '../widgets/app_drawer.dart';
+import 'package:shop/widgets/custom_appbar/src/app_drawer.dart';
 import '../widgets/products_grid.dart';
 import '../screens/cart_screen.dart';
 import '../widgets/badge.dart';
@@ -24,13 +24,10 @@ class _ProductsOverViewState extends State<ProductsOverView> {
 
   @override
   void initState() {
-    //in init state of(context) doesnt work
     Provider.of<Products>(context, listen: false).fetchAndSetProduct();
     super.initState();
   }
 
-  //initialises after the widget has be fully initialised
-  // but before build run it would also multiple times unlike initstate
   @override
   void didChangeDependencies() {
     if (_isInit) {
@@ -39,7 +36,6 @@ class _ProductsOverViewState extends State<ProductsOverView> {
       });
 
       Provider.of<Products>(context).fetchAndSetProduct().then((_) {
-        //for loading spinner
         setState(() {
           _isloading = false;
         });

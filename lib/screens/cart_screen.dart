@@ -42,13 +42,10 @@ class CartScreen extends StatelessWidget {
                   // ignore: deprecated_member_use
                   FlatButton(
                     child: Text('ORDER NOW'),
-                    //if it returns null flutter automatically disacles the button
                     onPressed: cart.totalAmount <= 0
                         ? null
                         : () {
-                            Provider.of<Orders>(context, listen: false)
-                                .addOrder(
-                              //for items to list of items istead of map
+                            Provider.of<Orders>(context, listen: false).addOrder(
                               cart.items.values.toList(),
                               cart.totalAmount,
                             );

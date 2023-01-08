@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/screens/pro_detail_screen.dart';
 import 'package:shop/screens/product_over_screen.dart';
 import 'package:shop/screens/splash_screen.dart';
 import './provider/orders.dart';
 import './screens/cart_screen.dart';
 import './provider/auth.dart';
-import '../screens/pro_detail_screen.dart';
 import './provider/prod_provider.dart';
 import './provider/cart.dart';
 import './screens/orders_screen.dart';
@@ -18,9 +18,6 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    //used for only child widget is needed that will noly rebuild
-    //provided at the root level d=so that it can be acessed by all others
-    //instead of material app
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(
@@ -39,8 +36,6 @@ class MyApp extends StatelessWidget {
             previousProducts == null ? [] : previousProducts.items,
             auth.userId,
           ),
-          //we r creating new object thatswhy be used create
-          // value: Products(),
         ),
         ChangeNotifierProvider(
           create: (ctx) => Cart(),
@@ -68,10 +63,7 @@ class MyApp extends StatelessWidget {
               : FutureBuilder(
                   future: auth.tryAutoLogin(),
                   builder: (ctx, authResultSnapShot) =>
-                      authResultSnapShot.connectionState ==
-                              ConnectionState.waiting
-                          ? SplashScreen()
-                          : AuthScreen(),
+                      authResultSnapShot.connectionState == ConnectionState.waiting ? SplashScreen() : AuthScreen(),
                 ),
           routes: {
             ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),

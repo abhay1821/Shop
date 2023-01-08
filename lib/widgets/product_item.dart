@@ -23,14 +23,6 @@ class ProductItem extends StatelessWidget {
         //for adding on tap on image
         child: GestureDetector(
           onTap: () {
-            //WE COULD ALSO USE PUSHNAMED and routename
-            // Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //     builder: (ctx) => ProductDetailScreen(title),
-            //   ),
-            // );
-            //we havnt used if prodetailscreen require price we cant provide it here
-            //so we prefer name route as passing through arguments
             Navigator.of(context).pushNamed(
               ProductDetailScreen.routeName,
               arguments: product.id,
@@ -83,8 +75,7 @@ class ProductItem extends StatelessWidget {
                   action: SnackBarAction(
                     label: 'UNDO',
                     onPressed: () {
-                      Provider.of<Cart>(context, listen: false)
-                          .removeSingleItem(product.id!);
+                      Provider.of<Cart>(context, listen: false).removeSingleItem(product.id!);
                     },
                   ),
                 ),

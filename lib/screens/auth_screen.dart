@@ -12,10 +12,7 @@ class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
-    // final transformConfig = Matrix4.rotationZ(-8 * pi / 180);
-    // transformConfig.translate(-10.0);
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
       body: Stack(
         children: <Widget>[
           Container(
@@ -39,16 +36,11 @@ class AuthScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  //controls the child of row/column
                   Flexible(
                     child: Container(
                       margin: EdgeInsets.only(bottom: 20.0),
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 94.0),
-                      //
-                      transform: Matrix4.rotationZ(-8 * pi / 180)
-                        ..translate(-10.0),
-                      // ..translate(-10.0),
+                      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 94.0),
+                      transform: Matrix4.rotationZ(-8 * pi / 180)..translate(-10.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         color: Colors.deepOrange.shade900,
@@ -91,8 +83,7 @@ class AuthCard extends StatefulWidget {
   _AuthCardState createState() => _AuthCardState();
 }
 
-class _AuthCardState extends State<AuthCard>
-    with SingleTickerProviderStateMixin {
+class _AuthCardState extends State<AuthCard> with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
   AuthMode _authMode = AuthMode.Login;
   Map<String, String> _authData = {
@@ -101,7 +92,6 @@ class _AuthCardState extends State<AuthCard>
   };
   var _isLoading = false;
   final _passwordController = TextEditingController();
-  //adding animation height of box
   AnimationController? _controller;
   // ignore: unused_field
   Animation<Size>? _heightAnimation;
@@ -116,16 +106,14 @@ class _AuthCardState extends State<AuthCard>
         milliseconds: 300,
       ),
     );
-    _heightAnimation = Tween<Size>(
-            begin: Size(double.infinity, 260), end: Size(double.infinity, 300))
-        .animate(CurvedAnimation(
+    _heightAnimation =
+        Tween<Size>(begin: Size(double.infinity, 260), end: Size(double.infinity, 300)).animate(CurvedAnimation(
       parent: _controller!,
       curve: Curves.fastOutSlowIn,
     ));
     _opacity = Tween(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _controller!, curve: Curves.easeIn),
     );
-    // _heightAnimation.addListener(() => setState(() {}));
   }
 
   @override
@@ -222,13 +210,9 @@ class _AuthCardState extends State<AuthCard>
         duration: Duration(milliseconds: 300),
         curve: Curves.easeIn,
         height: _authMode == AuthMode.Signup ? 320 : 260,
-        constraints:
-            BoxConstraints(minHeight: _authMode == AuthMode.Signup ? 320 : 260),
+        constraints: BoxConstraints(minHeight: _authMode == AuthMode.Signup ? 320 : 260),
         width: deviceSize.width * 0.75,
         padding: EdgeInsets.all(16.0),
-        //child: ch),
-        //ch which we animate
-        //which will not be rebuild
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
@@ -272,8 +256,7 @@ class _AuthCardState extends State<AuthCard>
                     opacity: _opacity!,
                     child: TextFormField(
                       enabled: _authMode == AuthMode.Signup,
-                      decoration:
-                          InputDecoration(labelText: 'Confirm Password'),
+                      decoration: InputDecoration(labelText: 'Confirm Password'),
                       obscureText: true,
                       validator: _authMode == AuthMode.Signup
                           ? (value) {
@@ -293,21 +276,18 @@ class _AuthCardState extends State<AuthCard>
                 else
                   // ignore: deprecated_member_use
                   RaisedButton(
-                    child:
-                        Text(_authMode == AuthMode.Login ? 'LOGIN' : 'SIGN UP'),
+                    child: Text(_authMode == AuthMode.Login ? 'LOGIN' : 'SIGN UP'),
                     onPressed: _submit,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 30.0, vertical: 8.0),
+                    padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 8.0),
                     color: Theme.of(context).primaryColor,
                     textColor: Theme.of(context).primaryTextTheme.button!.color,
                   ),
                 // ignore: deprecated_member_use
                 FlatButton(
-                  child: Text(
-                      '${_authMode == AuthMode.Login ? 'SIGNUP' : 'LOGIN'} INSTEAD'),
+                  child: Text('${_authMode == AuthMode.Login ? 'SIGNUP' : 'LOGIN'} INSTEAD'),
                   onPressed: _switchAuthMode,
                   padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 4),
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
